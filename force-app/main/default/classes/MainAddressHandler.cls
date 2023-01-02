@@ -30,19 +30,14 @@ public with sharing class MainAddressHandler {
             for(Account acc:relatedAccounts){
         
                 if(address.Account__c ==acc.id && address.Address_Type__c=='Shipping' ){
-                   if(!(address.city__c == acc.ShippingCity &&
-                        address.country__c == acc.ShippingCountry &&
-                        address.state__c == acc.ShippingState &&
-                        address.street__c == acc.ShippingStreet &&
-                        address.Postal_code__c == acc.ShippingPostalCode &&
-                        address.name == acc.name)){
+                   if(!(address.city__c == acc.ShippingCity && address.country__c == acc.ShippingCountry && address.state__c == acc.ShippingState && address.street__c == acc.ShippingStreet && address.Postal_code__c == acc.ShippingPostalCode && address.name == acc.name)){
                             
-                            address.city__c = acc.ShippingCity &&
-                            address.country__c = acc.ShippingCountry &&
-                            address.state__c = acc.ShippingState &&
-                            address.street__c =  acc.ShippingStreet &&
-                            address.Postal_code__c = acc.ShippingPostalCode &&
-                            address.name = acc.name;
+                            acc.ShippingCity = address.city__c;
+                            acc.ShippingCountry = address.country__c;
+                            acc.ShippingState = address.state__c ;
+                            acc.ShippingStreet = address.street__c;
+                            acc.ShippingPostalCode = address.Postal_code__c;
+                            acc.name = address.name;
                             accountsToUpdate.add(acc);
                    }
                 }
@@ -55,12 +50,12 @@ public with sharing class MainAddressHandler {
                         address.Postal_code__c == acc.BillingPostalCode &&
                         address.name == acc.name)){
 
-                            address.city__c = acc.BillingCity &&
-                            address.country__c = acc.BillingCountry &&
-                            address.state__c = acc.BillingState &&
-                            address.street__c =  acc.BillingStreet &&
-                            address.Postal_code__c = acc.BillingPostalCode &&
-                            address.name = acc.name;
+                            acc.BillingCity = address.city__c ; 
+                            acc.BillingCountry =  address.country__c;
+                            acc.BillingState = address.state__c;
+                            acc.BillingStreet = address.street__c;
+                            acc.BillingPostalCode = address.Postal_code__c;
+                            acc.name= address.name;
                             accountsToUpdate.add(acc);
                    }
                 }
