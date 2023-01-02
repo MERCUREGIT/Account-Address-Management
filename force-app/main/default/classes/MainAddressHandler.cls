@@ -29,36 +29,36 @@ public with sharing class MainAddressHandler {
         for(address__c address : addressList){
             for(Account acc:relatedAccounts){
                 if(address.Account__c ==acc.id && address.Address_Type__c=='Shipping' ){
-                   if(!(address[0].city__c == acc.ShippingCity &&
-                        address[0].country__c == acc.ShippingCountry &&
-                        address[0].state__c == acc.ShippingState &&
-                        address[0].street__c == acc.ShippingStreet &&
-                        address[0].Postal_code__c == acc.ShippingPostalCode &&
-                        address[0].name == acc.name)){
+                   if(!(address.city__c == acc.ShippingCity &&
+                        address.country__c == acc.ShippingCountry &&
+                        address.state__c == acc.ShippingState &&
+                        address.street__c == acc.ShippingStreet &&
+                        address.Postal_code__c == acc.ShippingPostalCode &&
+                        address.name == acc.name)){
                             
-                            address[0].city__c = acc.ShippingCity &&
-                            address[0].country__c = acc.ShippingCountry &&
-                            address[0].state__c = acc.ShippingState &&
-                            address[0].street__c =  acc.ShippingStreet &&
-                            address[0].Postal_code__c = acc.ShippingPostalCode &&
-                            address[0].name = acc.name;
+                            address.city__c = acc.ShippingCity &&
+                            address.country__c = acc.ShippingCountry &&
+                            address.state__c = acc.ShippingState &&
+                            address.street__c =  acc.ShippingStreet &&
+                            address.Postal_code__c = acc.ShippingPostalCode &&
+                            address.name = acc.name;
                             accountsToUpdate.add(acc);
                    }
                 }
                 if(address.Account__c ==acc.id && address.Address_Type__c=='Billing' ){
-                   if(!(address[0].city__c == acc.BillingCity &&
-                        address[0].country__c == acc.BillingCountry &&
-                        address[0].state__c == acc.BillingState &&
-                        address[0].street__c == acc.BillingStreet &&
-                        address[0].Postal_code__c == acc.BillingPostalCode &&
-                        address[0].name == acc.name)){
+                   if(!(address.city__c == acc.BillingCity &&
+                        address.country__c == acc.BillingCountry &&
+                        address.state__c == acc.BillingState &&
+                        address.street__c == acc.BillingStreet &&
+                        address.Postal_code__c == acc.BillingPostalCode &&
+                        address.name == acc.name)){
 
-                            address[0].city__c = acc.BillingCity &&
-                            address[0].country__c = acc.BillingCountry &&
-                            address[0].state__c = acc.BillingState &&
-                            address[0].street__c =  acc.BillingStreet &&
-                            address[0].Postal_code__c = acc.BillingPostalCode &&
-                            address[0].name = acc.name;
+                            address.city__c = acc.BillingCity &&
+                            address.country__c = acc.BillingCountry &&
+                            address.state__c = acc.BillingState &&
+                            address.street__c =  acc.BillingStreet &&
+                            address.Postal_code__c = acc.BillingPostalCode &&
+                            address.name = acc.name;
                             accountsToUpdate.add(acc);
                    }
                 }
