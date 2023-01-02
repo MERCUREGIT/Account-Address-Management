@@ -22,12 +22,13 @@ public with sharing class MainAddressHandler {
         }
 
         list<account> relatedAccounts = new list<account>();
-        relatedAccounts = [SELECT ShippingAddress, BillingAddress FROM Account WHERE id in :accountIds];
+        relatedAccounts = [SELECT id,BillingCity,BillingCountry,BillingState, BillingStreet, BillingPostalCode, name,ShippingCity, ShippingCountry, ShippingState, ShippingStreet, ShippingPostalCode FROM Account WHERE id in :accountIds];
 
         List<Account> accountsToUpdate = new List<Account>();
 
         for(address__c address : addressList){
             for(Account acc:relatedAccounts){
+        
                 if(address.Account__c ==acc.id && address.Address_Type__c=='Shipping' ){
                    if(!(address.city__c == acc.ShippingCity &&
                         address.country__c == acc.ShippingCountry &&
@@ -45,6 +46,7 @@ public with sharing class MainAddressHandler {
                             accountsToUpdate.add(acc);
                    }
                 }
+                
                 if(address.Account__c ==acc.id && address.Address_Type__c=='Billing' ){
                    if(!(address.city__c == acc.BillingCity &&
                         address.country__c == acc.BillingCountry &&
