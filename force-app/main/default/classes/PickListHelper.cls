@@ -2,7 +2,7 @@ public with sharing class PickListHelper {
     public PickListHelper() {
 
     }
-    public static List<Schema.PicklistEntry> getPicklistValuesForLabel(
+    public static Schema.PicklistEntry getPicklistValuesForLabel(
             Schema.sObjectField field, string label) {
                 Schema.PicklistEntry picklistEntry;  
         List<Schema.PicklistEntry> entries = field.getDescribe().getPickListValues();

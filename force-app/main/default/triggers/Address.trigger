@@ -10,5 +10,5 @@ delete, after insert, after update, after delete,  after undelete) {
 
     if (Trigger.isAfter && Trigger.isUpdate) {
         MainAddressHandler.traverseMainAddressUpdateOnAccount(Trigger.new);
-}
+    }
 }

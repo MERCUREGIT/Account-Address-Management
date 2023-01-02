@@ -5,14 +5,13 @@
  * last-edited-on: 01/01/2023 10:46 am
  */
 
-trigger Account on Account (before insert, before update, before
-delete, after insert, after update, after delete,  after undelete) {
+trigger Account on Account ( after insert, after update) {
     if (Trigger.isAfter && Trigger.isInsert) {
         AccountAddressStateHandler.createAddressesFromListOfAccounts(Trigger.New);
     }
 
     if (Trigger.isAfter && Trigger.isUpdate) {
-            AccountAddressStateHandler.updateAccountBillingAddress(Trigger.new[0], Trigger.old[0]);
+            AccountAddressStateHandler.updateAddressOnAccountAddressUpdate(Trigger.new[0], Trigger.old[0]);
     }
 
 }
