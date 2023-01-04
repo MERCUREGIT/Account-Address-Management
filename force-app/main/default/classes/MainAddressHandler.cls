@@ -5,62 +5,139 @@
  */
 
 public with sharing class MainAddressHandler {
-    public MainAddressHandler() {
 
+    public static TriggerSwitch__mdt triggerOperationsSwitch = TriggerSwitch__mdt.getInstance('account_address_switch_on_address');
+
+
+
+    public static void toggleTraverseMainAddressToAccountOnInsert(Map<id,Account_Address__c> addressMap){
+        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
+            return;
+        }
+      
+       
+        set<Account_Address__c> mainAdressesToUpdateAsNotMainList = new set<Account_Address__c>();
+        for(Account_Address__c address :  addressMap.values()){
+            if(address.is_main__c){
+                Map<Id,Account_Address__c> existingMainAddressesOnAccount =new Map<Id,Account_Address__c> ([select id, city__c, country__c, state__c,street__c,PostalCode__c,Address_Type__c FROM Account_Address__c where  Account__c =: address.Account__c and is_main__c=true and Address_Type__c=: address.Address_Type__c]);
+                
+                list<Account_Address__c> existingMainAddressesOnAccountList = existingMainAddressesOnAccount.values();
+                integer indexOfCurrentMain;
+             
+                if(!existingMainAddressesOnAccount.isEmpty()){
+                    for (Account_Address__c oldOrNewMainAddress : existingMainAddressesOnAccountList) {
+                        //check if address is not the new one
+                        if(!existingMainAddressesOnAccount.containsKey(oldOrNewMainAddress.id)){
+                            oldOrNewMainAddress.is_main__c = false;
+                            mainAdressesToUpdateAsNotMainList.add(oldOrNewMainAddress);
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        if(!mainAdressesToUpdateAsNotMainList.isEmpty()){
+            update new list<Account_Address__c>(mainAdressesToUpdateAsNotMainList);
+        }
+        MainAddressHandler.updateAccountMainAddressOnMainAddressUpdate(addressMap);
+        
+    }
+    public static void toggleMainAddressOnUpdate(Map<id,Account_Address__c> addressMap){
+        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
+            return;
+        }
+        set<Account_Address__c> mainAdressesToUpdateAsNotMainList = new set<Account_Address__c>();
+        for(Account_Address__c address :  addressMap.values()){
+            if(address.is_main__c){
+                Map<Id,Account_Address__c> existingMainAddressesOnAccount =new Map<Id,Account_Address__c> ([select id, city__c, country__c, state__c,street__c,PostalCode__c,Address_Type__c FROM Account_Address__c where  Account__c =: address.Account__c and is_main__c=true and Address_Type__c=: address.Address_Type__c]);
+                
+                list<Account_Address__c> existingMainAddressesOnAccountList = existingMainAddressesOnAccount.values();
+                integer indexOfCurrentMain;
+             
+                if(!existingMainAddressesOnAccount.isEmpty()){
+                    if(existingMainAddressesOnAccount.containsKey(address.id)){
+                        indexOfCurrentMain = existingMainAddressesOnAccountList.indexof(existingMainAddressesOnAccount.get(address.id));
+                        for (Integer i = 0; i < existingMainAddressesOnAccountList.size(); i++) {
+                            if(indexOfCurrentMain != i){
+                                existingMainAddressesOnAccountList[i].is_main__c = false;
+                                mainAdressesToUpdateAsNotMainList.add(existingMainAddressesOnAccountList[i]);
+                            }
+                        }
+                    }else{
+                        for (Account_Address__c oldMainAddress : existingMainAddressesOnAccountList) {
+                            oldMainAddress.is_main__c = false;
+                            mainAdressesToUpdateAsNotMainList.add(oldMainAddress);
+                        }
+                    }
+                }
+            }
+        }
+        if(!mainAdressesToUpdateAsNotMainList.isEmpty()){
+            update new list<Account_Address__c>(mainAdressesToUpdateAsNotMainList);
+        }
     }
 
-    public static void traverseMainAddressUpdateOnAccount(list<address__c> addressList){
-
+    public static void updateAccountMainAddressOnMainAddressUpdate(Map<id,Account_Address__c> addressMap){
+        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
+            return;
+        }
         list<id> accountIds = new list<id>();
-        list<address__c> mainAdresses = new list<address__c>();
+        list<Account_Address__c> mainAdresses = new list<Account_Address__c>();
 
-        for(address__c address : addressList){
-            if(address.status__c){
+        for(Account_Address__c address : addressMap.values()){
+            if(address.is_main__c){
                 mainAdresses.add(address);
                 accountIds.add(address.Account__c);
             }
         }
 
-        list<account> relatedAccounts = new list<account>();
-        relatedAccounts = [SELECT id,BillingCity,BillingCountry,BillingState, BillingStreet, BillingPostalCode, name,ShippingCity, ShippingCountry, ShippingState, ShippingStreet, ShippingPostalCode FROM Account WHERE id in :accountIds];
+        if(mainAdresses.isEmpty()){
+            return;
+        }
+
+        Map<id,account> relatedAccountsMap = new Map<id,account>([SELECT id,BillingCity,BillingCountry,BillingState, BillingStreet, BillingPostalCode, ShippingCity, ShippingCountry, ShippingState, ShippingStreet, ShippingPostalCode FROM Account WHERE id in :accountIds]);
 
         List<Account> accountsToUpdate = new List<Account>();
 
-        for(address__c address : addressList){
-            for(Account acc:relatedAccounts){
-        
-                if(address.Account__c ==acc.id && address.Address_Type__c=='Shipping' ){
-                   if(!(address.city__c == acc.ShippingCity && address.country__c == acc.ShippingCountry && address.state__c == acc.ShippingState && address.street__c == acc.ShippingStreet && address.Postal_code__c == acc.ShippingPostalCode && address.name == acc.name)){
-                            
-                            acc.ShippingCity = address.city__c;
-                            acc.ShippingCountry = address.country__c;
-                            acc.ShippingState = address.state__c ;
-                            acc.ShippingStreet = address.street__c;
-                            acc.ShippingPostalCode = address.Postal_code__c;
-                            acc.name = address.name;
-                            accountsToUpdate.add(acc);
-                   }
+        for(Account_Address__c address : mainAdresses){
+            Account relatedAccount = relatedAccountsMap.get(address.Account__c);
+
+            boolean hasShippingAddressChanged = address.city__c == relatedAccount.ShippingCity && 
+            address.country__c == relatedAccount.ShippingCountry && 
+            address.state__c == relatedAccount.ShippingState && 
+            address.street__c == relatedAccount.ShippingStreet && 
+            address.PostalCode__c == relatedAccount.ShippingPostalCode;  
+            
+            boolean hasBillingAddressChanged = address.city__c == relatedAccount.BillingCity &&
+            address.country__c == relatedAccount.BillingCountry &&
+            address.state__c == relatedAccount.BillingState &&
+            address.street__c == relatedAccount.BillingStreet &&
+            address.PostalCode__c == relatedAccount.BillingPostalCode ;
+
+            if(address.Address_Type__c=='Shipping' && !(hasShippingAddressChanged)){
+
+                    relatedAccount.ShippingCity = address.city__c;
+                    relatedAccount.ShippingCountry = address.country__c;
+                    relatedAccount.ShippingState = address.state__c ;
+                    relatedAccount.ShippingStreet = address.street__c;
+                    relatedAccount.ShippingPostalCode = address.PostalCode__c;
+                    accountsToUpdate.add(relatedAccount);
                 }
                 
-                if(address.Account__c ==acc.id && address.Address_Type__c=='Billing' ){
-                   if(!(address.city__c == acc.BillingCity &&
-                        address.country__c == acc.BillingCountry &&
-                        address.state__c == acc.BillingState &&
-                        address.street__c == acc.BillingStreet &&
-                        address.Postal_code__c == acc.BillingPostalCode &&
-                        address.name == acc.name)){
+                if(address.Address_Type__c=='Billing' && !(hasBillingAddressChanged) ){
 
-                            acc.BillingCity = address.city__c ; 
-                            acc.BillingCountry =  address.country__c;
-                            acc.BillingState = address.state__c;
-                            acc.BillingStreet = address.street__c;
-                            acc.BillingPostalCode = address.Postal_code__c;
-                            acc.name= address.name;
-                            accountsToUpdate.add(acc);
-                   }
+                    relatedAccount.BillingCity = address.city__c ; 
+                    relatedAccount.BillingCountry =  address.country__c;
+                    relatedAccount.BillingState = address.state__c;
+                    relatedAccount.BillingStreet = address.street__c;
+                    relatedAccount.BillingPostalCode = address.PostalCode__c;
+                    accountsToUpdate.add(relatedAccount);
                 }
-            }
+            
+        }
 
+        if(!accountsToUpdate.isEmpty()){
             update accountsToUpdate;
         }
     }

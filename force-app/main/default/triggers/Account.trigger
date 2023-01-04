@@ -6,17 +6,11 @@
  */
 
 trigger Account on Account ( after insert, after update) {
-
-   TriggerSwitch__mdt[] swicthes = [SELECT QualifiedApiName, MasterLabel,  is_active__c
-    , name__c FROM TriggerSwitch__mdt where name__c='account'];
-
-    if(swicthes[0].is_active__c){
         if (Trigger.isAfter && Trigger.isInsert) {
-            AccountAddressStateHandler.createAddressesFromListOfAccounts(Trigger.New);
+                AccountAddressStateHandler.createAddressesFromListOfNewAccounts(Trigger.newMap);
         }
-    
+
         if (Trigger.isAfter && Trigger.isUpdate) {
-                AccountAddressStateHandler.updateAddressOnAccountAddressUpdate(Trigger.new[0], Trigger.old[0]);
+                AccountAddressStateHandler.updateMainAddressOnAccountMainAddressUpdate(Trigger.newMap);
         }
-    }
 }
