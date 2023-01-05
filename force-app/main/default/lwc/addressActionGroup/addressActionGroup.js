@@ -5,12 +5,12 @@ export default class AddressActionGroup extends LightningElement {
     @api address;
     
     view() {
-        
+        this.dispatchEvent(new CustomEvent('view',{detail:{id:this.address.Id}}));
     }
     update() { 
-        this.dispatchEvent(new CustomEvent('update'));
+        this.dispatchEvent(new CustomEvent('update',{detail:{id:this.address.Id}}));
     }
-    delete() {
-        
+    handleDeleteAddress() {
+        this.dispatchEvent(new CustomEvent('deleteaddress',{detail:{id:this.address.Id}}));
     }
 }

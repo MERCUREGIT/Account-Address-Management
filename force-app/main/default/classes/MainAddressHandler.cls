@@ -26,7 +26,6 @@ public with sharing class MainAddressHandler {
              
                 if(!existingMainAddressesOnAccount.isEmpty()){
                     for (Account_Address__c oldOrNewMainAddress : existingMainAddressesOnAccountList) {
-                        //check if address is not the new one
                         if(!existingMainAddressesOnAccount.containsKey(oldOrNewMainAddress.id)){
                             oldOrNewMainAddress.is_main__c = false;
                             mainAdressesToUpdateAsNotMainList.add(oldOrNewMainAddress);
@@ -134,7 +133,6 @@ public with sharing class MainAddressHandler {
                     relatedAccount.BillingPostalCode = address.PostalCode__c;
                     accountsToUpdate.add(relatedAccount);
                 }
-            
         }
 
         if(!accountsToUpdate.isEmpty()){

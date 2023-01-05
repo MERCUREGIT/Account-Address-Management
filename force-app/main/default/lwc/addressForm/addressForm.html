@@ -1,6 +1,39 @@
 <template>
-    <form >
 
-    </form>
-    <button onclick={cancelEdit}>Cancel edit</button>
+
+    <lightning-record-form
+    if:true={isviewonly}
+    object-api-name="Account_Address__c"
+    record-id={recordIdToEdit}
+    layout-type="Compact"
+    columns="1"
+    mode="readonly"
+    >
+    </lightning-record-form>
+
+    <lightning-record-form
+    object-api-name="Account_Address__c"
+    record-id={recordIdToEdit}
+    if:true={isedit}
+    mode ="edit"
+    layout-type = "Full"
+    columns="2"
+    oncancel={cancel}
+    fields={fields}
+    >
+    </lightning-record-form>
+
+
+    <lightning-record-form
+    object-api-name="Account_Address__c"
+    fields={fields}
+    oncancel={cancel}
+    layout-type = "Full"
+    if:true={isereate}
+    columns="2"
+    onsuccess={handleSuccess}
+    >
+    </lightning-record-form>
+
+
 </template>

@@ -1,7 +1,18 @@
 <template>
-    <td>{address.name}</td>
-        <td>{address.status__c} 
-            <span if:true={address.status__c}>(main)</span>
+        <th scope="row">
+            <div class="slds-truncate" title={address.Name}>
+                <a href="#" tabindex="-1">{address.Name}</a>
+            </div>
+        </th>
+        <td role="gridcell">
+            <div class="slds-truncate" title={address.Is_main__c}>
+                <lightning-pill if:true={address.Is_main__c} label="Main Address" variant="plain">
+                    <lightning-icon icon-name="standard:address" alternative-text="Address"></lightning-icon>
+                </lightning-pill>
+            </div>
         </td>
-        <td>{address.name}</td>
+        <td role="gridcell">
+            <div class="slds-truncate" title={address.Address_Type__c}>{address.Address_Type__c}
+            </div>
+        </td>
 </template>

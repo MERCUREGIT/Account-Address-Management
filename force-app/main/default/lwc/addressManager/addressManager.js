@@ -5,39 +5,82 @@
  */
 
 import { api,wire, LightningElement, track  } from 'lwc';
-import { getRelatedListRecords } from 'lightning/uiRelatedListApi';
+import getRecord from '@salesforce/apex/AccountAddressController.getRelatedAddresses';
+import handleAddressDelete from '@salesforce/apex/AccountAddressController.deleteAddress';
+
+
+
 
 
 export default class AddressManager extends LightningElement {
 
-    display=false;
-    edit= false;
+    isEdit= false;
+    isViewOnly = false;
+    isCreate = false;
+
+    recordIdToEdit = "";
 
     fecthError ;
+
+    @track
     addresses = [];
 
     @api objectApiName;
     @api recordId;
 
-    @wire(getRelatedListRecords, {
-        parentRecordId: objectApiName,
-        relatedListId: 'Account_Address__c',
-        fields: ['Account_Address__c.Name', 'Account_Address__c.Account__c','Account_Address__c.Address_Type__c','Account_Address__c.city__c','Account_Address__c.Country__c','Account_Address__c.Is_main__c','Account_Address__c.state__c','Account_Address__c.street__c','Account_Address__c.PostalCode__c'],
-        pageSize: 10,
+    @wire(getRecord, {
+        recordId: '$recordId'
     }) 
-    relatedAccountAddress({ error, data }) {
+    getRelatedAccountAddress({ error, data }) {
         if (data) {
-            this.addresses = data.records;
+            this.addresses = [...data];
+            console.log(data)
             this.fecthError = undefined;
+
         } else if (error) {
             this.fecthError = error;
+            console.log(this.fecthError);
             this.addresses = [];
         }
     }
 
     
+    
+    handleDeleteAddress(event){
+        handleAddressDelete({recordId:event.detail.id })
+            .then(res=>{
+                this.addresses = [...this.addresses.filter(address => {return address.Id != event.detail.id})];
+            }).catch(error => {
+                console.log('Error :::: ',error)
+            })
+    }
 
-    toggleEdit(){
-        this.edit = !this.edit; 
+    get isAction(){
+        return  (this.isCreate || this.isEdit || this.isViewOnly);
+    }
+
+    createRecord(event){
+        this.cancelAction();
+        this.recordIdToEdit = event.detail.id ;
+        this.isCreate = !this.isCreate;
+         
+    }
+
+    toggleEdit(event){
+        this.cancelAction();
+        this.recordIdToEdit = event.detail.id ;
+        this.isEdit = !this.isEdit; 
+    }
+
+    cancelAction(){
+        this.isViewOnly = false;
+        this.isEdit = false; 
+        this.isCreate = false;
+    }
+
+    viewOnly(event){
+        this.cancelAction();
+        this.recordIdToEdit = event.detail.id ;
+        this.isViewOnly = !this.isViewOnly; 
     }
 }
