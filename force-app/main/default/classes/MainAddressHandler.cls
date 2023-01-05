@@ -8,8 +8,6 @@ public with sharing class MainAddressHandler {
 
     public static TriggerSwitch__mdt triggerOperationsSwitch = TriggerSwitch__mdt.getInstance('account_address_switch_on_address');
 
-
-
     public static void toggleTraverseMainAddressToAccountOnInsert(Map<id,Account_Address__c> addressMap){
         if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
             return;
