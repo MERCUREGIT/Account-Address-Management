@@ -13,15 +13,15 @@ export default class AddressForm extends LightningElement {
     @api recordIdToEdit;
 
     @api
-    isedit= false;
+    isedit = false;
     @api
     isviewonly = false;
     @api
     iscreate = false;
 
-    fields = [NAME_FIELD,CITY_FIELD,COUNTRY_FIELD,STATE_FIELD,IS_MAIN_FIELD,STREET_FIELD,POSTALCODE_FIELD,ADDRESS_TYPE_FIELD,ACCOUNT_ADDRESS_ACCOUNT_FIELD];
+    fields = [NAME_FIELD, CITY_FIELD, COUNTRY_FIELD, STATE_FIELD, IS_MAIN_FIELD, STREET_FIELD, POSTALCODE_FIELD, ADDRESS_TYPE_FIELD, ACCOUNT_ADDRESS_ACCOUNT_FIELD];
 
-    cancel(){
+    cancel() {
         this.dispatchEvent(new CustomEvent('cancel'));
     }
 

@@ -1,7 +1,6 @@
 <template>
-
-    recordId : {recordId}
-    <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+    Object ID : {recordId}
+    <div if:true={fecthError} class="slds-notify slds-notify_alert slds-alert_error" role="alert">
         <span class="slds-assistive-text">error</span>
         <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small"
             title="Description of icon when needed">
@@ -9,7 +8,7 @@
                 <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#error"></use>
             </svg>
         </span>
-        <h2 if:true={fecthError} >Hey.... seems an error occured while searching for Address records related to this account </h2>
+        <h2>Hey.... seems an error occured while searching for Address records related to this account </h2>
         <div class="slds-notify__close">
             <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Close">
                 <svg class="slds-button__icon" aria-hidden="true">
@@ -19,7 +18,7 @@
             </button>
         </div>
     </div>
-    <article if:false={isAction} class="slds-card">
+    <article class="slds-card slds-p-around_xx-small">
         <div class="slds-card__header slds-grid">
             <header class="slds-media slds-media_center slds-has-flexi-truncate">
                 <div class="slds-media__figure">
@@ -38,29 +37,31 @@
                     </h2>
                 </div>
                 <div class="slds-no-flex">
-                    <button class="slds-button slds-button_neutral"  onclick={createRecord}>
-                        <lightning-icon icon-name="utility:add" alternative-text="Create" title="Create new address"></lightning-icon>
+                    <button class="slds-button slds-button_icon-small" if:false={isAction} onclick={createRecord}>
+                        <lightning-icon icon-name="utility:record_create" alternative-text="Create"
+                            title="Create new address"></lightning-icon>
                     </button>
-                    <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Cancel Action" if:true={isAction} onclick={cancelAction}>
-                        <svg class="slds-button__icon" aria-hidden="true">
-                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
-                        </svg>
+                    <button class="slds-button slds-button_neutral" title="Cancel Action" if:true={isAction}
+                        onclick={cancelAction}>
+                        Cancel
                         <span class="slds-assistive-text">Close</span>
                     </button>
                 </div>
             </header>
         </div>
         <div class="slds-media__body">
-
+            <template if:true={isAction}>
+                <c-address-form isedit={isEdit} isviewonly={isViewOnly} iscreate={isCreate}
+                    recordidtoedit={recordIdToEdit} oncancel={cancelAction}></c-address-form>
+            </template>
             <div if:false={addresses} class="demo-only demo-only_viewport" style="height:6rem;position:relative">
                 <div role="status" class="slds-spinner slds-spinner_medium">
-                  <span class="slds-assistive-text">Loading</span>
-                  <div class="slds-spinner__dot-a"></div>
-                  <div class="slds-spinner__dot-b"></div>
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
                 </div>
             </div>
-
-            <table
+            <table if:true={addresses} if:false={isAction}
                 class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table_fixed-layout"
                 role="grid" aria-label="List of Account Address Records">
                 <thead>
@@ -79,24 +80,17 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody key={address.Id}  for:each={addresses} for:item="address">
                     <tr class="slds-hint-parent">
-                        <template for:each={addresses} for:item="address">
-                            <c-address-item key={address.Id} address={address}>
-                            </c-address-item>
-                            <td role="gridcell">
-                                <c-address-action-group onview={viewOnly} ondeleteaddress={handleDeleteAddress}
-                                    onupdate={toggleEdit} key={address.Id}
-                                    address={address}></c-address-action-group>
-                            </td>
-                        </template>
+                        <c-address-item address={address}>
+                        </c-address-item>
+                        <td role="gridcell">
+                            <c-address-action-group onview={viewOnly} ondeleteaddress={handleDeleteAddress}
+                                onupdate={toggleEdit} address={address}></c-address-action-group>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </article>
-    <template if:true={isAction}>
-        <c-address-form isedit={isEdit} isviewonly={isViewOnly} iscreate={isCreate} recordidtoedit={recordIdToEdit}
-            oncancel={cancelAction}></c-address-form>
-    </template>
 </template>

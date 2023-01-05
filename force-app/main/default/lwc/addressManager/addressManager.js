@@ -4,33 +4,25 @@
  * 
  */
 
-import { api,wire, LightningElement, track  } from 'lwc';
+import { api, wire, LightningElement, track } from 'lwc';
 import getRecord from '@salesforce/apex/AccountAddressController.getRelatedAddresses';
 import handleAddressDelete from '@salesforce/apex/AccountAddressController.deleteAddress';
 
-
-
-
-
 export default class AddressManager extends LightningElement {
 
-    isEdit= false;
+    isEdit = false;
     isViewOnly = false;
     isCreate = false;
-
     recordIdToEdit = "";
-
-    fecthError ;
+    fecthError;
 
     @track
     addresses = [];
-
     @api objectApiName;
     @api recordId;
-
     @wire(getRecord, {
         recordId: '$recordId'
-    }) 
+    })
     getRelatedAccountAddress({ error, data }) {
         if (data) {
             this.addresses = [...data];
@@ -44,43 +36,40 @@ export default class AddressManager extends LightningElement {
         }
     }
 
-    
-    
-    handleDeleteAddress(event){
-        handleAddressDelete({recordId:event.detail.id })
-            .then(res=>{
-                this.addresses = [...this.addresses.filter(address => {return address.Id != event.detail.id})];
+    handleDeleteAddress(event) {
+        handleAddressDelete({ recordId: event.detail.id })
+            .then(res => {
+                this.addresses = [...this.addresses.filter(address => { return address.Id != event.detail.id })];
             }).catch(error => {
-                console.log('Error :::: ',error)
+                console.log('Error :::: ', error)
             })
     }
 
-    get isAction(){
-        return  (this.isCreate || this.isEdit || this.isViewOnly);
+    get isAction() {
+        return (this.isCreate || this.isEdit || this.isViewOnly);
     }
 
-    createRecord(event){
+    createRecord(event) {
         this.cancelAction();
-        this.recordIdToEdit = event.detail.id ;
+        this.recordIdToEdit = event.detail.id;
         this.isCreate = !this.isCreate;
-         
     }
 
-    toggleEdit(event){
+    toggleEdit(event) {
         this.cancelAction();
-        this.recordIdToEdit = event.detail.id ;
-        this.isEdit = !this.isEdit; 
+        this.recordIdToEdit = event.detail.id;
+        this.isEdit = !this.isEdit;
     }
 
-    cancelAction(){
+    cancelAction() {
         this.isViewOnly = false;
-        this.isEdit = false; 
+        this.isEdit = false;
         this.isCreate = false;
     }
 
-    viewOnly(event){
+    viewOnly(event) {
         this.cancelAction();
-        this.recordIdToEdit = event.detail.id ;
-        this.isViewOnly = !this.isViewOnly; 
+        this.recordIdToEdit = event.detail.id;
+        this.isViewOnly = !this.isViewOnly;
     }
 }
