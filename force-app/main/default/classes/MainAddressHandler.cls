@@ -77,32 +77,34 @@ public with sharing class MainAddressHandler {
             }
     }
     public static void toggleMainAddressOnUpdate(Map<id,Account_Address__c> addressMap){
-        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
-            set<Account_Address__c> mainAdressesToUpdateAsNotMainList = new set<Account_Address__c>();
-            for(Account_Address__c address :  addressMap.values()){
-                if(address.is_main__c){
-                    Map<Id,Account_Address__c> existingMainAddressesOnAccount =new Map<Id,Account_Address__c> ([select id, city__c, country__c, state__c,street__c,PostalCode__c,Address_Type__c FROM Account_Address__c where  Account__c =: address.Account__c and is_main__c=true and Address_Type__c=: address.Address_Type__c]);
-                    
-                    list<Account_Address__c> existingMainAddressesOnAccountList = existingMainAddressesOnAccount.values();
-                    integer indexOfCurrentMain;
-                 
-                    if(!existingMainAddressesOnAccount.isEmpty()){
-                        if(existingMainAddressesOnAccount.containsKey(address.id)){
-                            indexOfCurrentMain = existingMainAddressesOnAccountList.indexof(existingMainAddressesOnAccount.get(address.id));
-                            for (Integer i = 0; i < existingMainAddressesOnAccountList.size(); i++) {
-                                if(indexOfCurrentMain != i){
-                                    existingMainAddressesOnAccountList[i].is_main__c = false;
-                                    mainAdressesToUpdateAsNotMainList.add(existingMainAddressesOnAccountList[i]);
-                                }
+        if(MainAddressHandler.triggerOperationsSwitch.is_active__c){
+        set<Account_Address__c> mainAdressesToUpdateAsNotMainList = new set<Account_Address__c>();
+        for(Account_Address__c address :  addressMap.values()){
+            if(address.is_main__c){
+                Map<Id,Account_Address__c> existingMainAddressesOnAccount =new Map<Id,Account_Address__c> ([select id, city__c, country__c, state__c,street__c,PostalCode__c,Address_Type__c FROM Account_Address__c where  Account__c =: address.Account__c and is_main__c=true and Address_Type__c=: address.Address_Type__c]);
+                
+                list<Account_Address__c> existingMainAddressesOnAccountList = existingMainAddressesOnAccount.values();
+                integer indexOfCurrentMain;
+             
+                if(!existingMainAddressesOnAccount.isEmpty()){
+                    if(existingMainAddressesOnAccount.containsKey(address.id)){
+                        indexOfCurrentMain = existingMainAddressesOnAccountList.indexof(existingMainAddressesOnAccount.get(address.id));
+                        for (Integer i = 0; i < existingMainAddressesOnAccountList.size(); i++) {
+                            if(indexOfCurrentMain != i){
+                                existingMainAddressesOnAccountList[i].is_main__c = false;
+                                mainAdressesToUpdateAsNotMainList.add(existingMainAddressesOnAccountList[i]);
                             }
                         }
                     }
                 }
             }
-            if(!mainAdressesToUpdateAsNotMainList.isEmpty()){
-                update new list<Account_Address__c>(mainAdressesToUpdateAsNotMainList);
-            }  
         }
+        if(!mainAdressesToUpdateAsNotMainList.isEmpty()){
+            update new list<Account_Address__c>(mainAdressesToUpdateAsNotMainList);
+        }
+            
+        }
+
     }
 
     public static void updateAccountMainAddressOnMainAddressUpdate(Map<id,Account_Address__c> addressMap){
@@ -117,11 +119,9 @@ public with sharing class MainAddressHandler {
                     accountIds.add(address.Account__c);
                 }
             }
-    
             if(newMainAdressList.isEmpty()){
                 return;
             }
-    
             Map<id,account> relatedAccountsMap = new Map<id,account>([SELECT id,BillingCity,BillingCountry,BillingState, BillingStreet, BillingPostalCode, ShippingCity, ShippingCountry, ShippingState, ShippingStreet, ShippingPostalCode FROM Account WHERE id in :accountIds]);
     
             List<Account> accountsToUpdate = new List<Account>();
