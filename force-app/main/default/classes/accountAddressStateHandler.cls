@@ -10,9 +10,7 @@ public without sharing class AccountAddressStateHandler {
     public static TriggerSwitch__mdt triggerOperationsSwitch = TriggerSwitch__mdt.getInstance('account_address_switch_on_account');
 
     public static void createAddressesFromListOfNewAccounts(map<id,Account> accountMap){
-        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
-            return;
-        }
+        if(MainAddressHandler.triggerOperationsSwitch.is_active__c){
             List<Account_Address__c> newAddressList = new List<Account_Address__c>();
 
             for(Account acc:accountMap.values()){
@@ -23,6 +21,8 @@ public without sharing class AccountAddressStateHandler {
             if(!newAddressList.isEmpty()){
                 insert newAddressList;
             } 
+        }
+            
     }
 
     public static void createBillingAddressesFromAccount(Account acc, List<Account_Address__c> newAddressList){
@@ -75,9 +75,7 @@ public without sharing class AccountAddressStateHandler {
         }
 
     public static void updateMainAddressOnAccountMainAddressUpdate(Map<id,Account> updatedAccountsMap){
-        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
-            return;
-        }
+        if(MainAddressHandler.triggerOperationsSwitch.is_active__c){
             account  updatedAccount =  updatedAccountsMap.values()[0];
 
             Schema.PicklistEntry  shippingPicklistEntry =  PickListHelper.getPicklistValuesForLabel(Account_Address__c.Address_Type__c,'Shipping');
@@ -130,6 +128,8 @@ public without sharing class AccountAddressStateHandler {
                     update existingBillingAddress;
                 }  
             }
+        }
+            
 
         }
     

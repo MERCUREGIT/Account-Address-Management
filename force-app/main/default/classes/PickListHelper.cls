@@ -8,17 +8,16 @@
 
 public with sharing class PickListHelper {
 
-    public static Schema.PicklistEntry getPicklistValuesForLabel(
-            Schema.sObjectField field, string label) {
-                Schema.PicklistEntry picklistEntry;  
-        List<Schema.PicklistEntry> entries = field.getDescribe().getPickListValues();
+    public static Schema.PicklistEntry getPicklistValuesForLabel(Schema.sObjectField field, string label) {
+            Schema.PicklistEntry picklistEntry;  
+            List<Schema.PicklistEntry> entries = field.getDescribe().getPickListValues();
 
-        for (Schema.PicklistEntry entry : entries) {
-            if (entry.isActive() && entry.getLabel().toUpperCase()==label.toUpperCase()) {
-                picklistEntry = entry;
-                break;
+            for (Schema.PicklistEntry entry : entries) {
+                if (entry.isActive() && entry.getLabel().toUpperCase()==label.toUpperCase()) {
+                    picklistEntry = entry;
+                    break;
+                }
             }
-        }
-        return picklistEntry;
+            return picklistEntry;
     }
 }
