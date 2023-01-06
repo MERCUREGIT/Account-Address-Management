@@ -1,3 +1,7 @@
+/**
+ * Author: Ngum buka Fon Nyuydze
+ * email: ngumbukafon@gmail.com
+ */
 @isTest
 public with sharing class AccountAddressControllerTest {
     
@@ -5,6 +9,7 @@ public with sharing class AccountAddressControllerTest {
     static void createAddressesForAccount(){
         account acc = new Account(name='Test');
         insert acc;
+        
         List<Account_Address__c> relatedAccountAddress =  new List<Account_Address__c>();
         for (Integer i = 0; i < 200; i++) {
             relatedAccountAddress.add(
@@ -23,12 +28,6 @@ public with sharing class AccountAddressControllerTest {
         insert relatedAccountAddress;
     }
 
-    @isTest 
-    static void getRelatedAddressesTest(){
-        list<account> acc = [SELECT id,name from account LIMIT 1];
-        List<Account_Address__c> relatedAddresses = AccountAddressController.getRelatedAddresses(String.valueOf(acc[0].id));
-        System.assertEquals(200, relatedAddresses.size());
-    }
 
     @isTest 
     static void deleteAddressTest(){
@@ -39,4 +38,15 @@ public with sharing class AccountAddressControllerTest {
         list<Account_Address__c> deletedAccAddress = [SELECT id,name from Account_Address__c WHERE id  =:accAddressID];
         System.assertEquals(0, deletedAccAddress.size());
     }
+
+    @isTest 
+    static void getRelatedAddressesTest(){
+        list<account> acc = [SELECT id,name from account LIMIT 1];
+
+        list<Account_Address__c> accAddress = [SELECT id,name from Account_Address__c WHERE Account__c  =:acc[0].id];
+
+        List<Account_Address__c> relatedAddresses = AccountAddressController.getRelatedAddresses(acc[0].id +'');
+        System.assertEquals(accAddress.size(), relatedAddresses.size(),'Number of Accounts Returned By Function');
+    }
+
 }

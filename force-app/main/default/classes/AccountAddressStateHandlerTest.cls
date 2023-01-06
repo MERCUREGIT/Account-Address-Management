@@ -1,17 +1,14 @@
+/**
+ * Author: Ngum buka Fon Nyuydze
+ * email: ngumbukafon@gmail.com
+ */
+
 @isTest
 public with sharing class AccountAddressStateHandlerTest {
-
-//   @TestSetup
-//     static void setUpVaryingAccounts(){
-        
-//     }
-
     @isTest
     static void createAddressesFromListOfNewAccountsWithCompleteAddressTest(){
 
         TriggerSwitch__mdt triggerOperationsSwitch = TriggerSwitch__mdt.getInstance('account_address_switch_on_account');
-
-      
         
         if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
             System.assertEquals(false, MainAddressHandler.triggerOperationsSwitch.is_active__c);

@@ -1,8 +1,15 @@
+/**
+ * Author: Ngum buka Fon Nyuydze
+ * email: ngumbukafon@gmail.com
+ */
+
 public with sharing class AccountAddressController {
 
     @AuraEnabled(Cacheable=true)
     public static List<Account_Address__c> getRelatedAddresses(String recordId) {
-        return [select id, city__c, country__c, state__c,street__c,PostalCode__c, is_main__c, Address_Type__c , Name FROM Account_Address__c where  Account__c='001Dn00000AWgNfIAL'];        
+        List<Account_Address__c> addressList = new List<Account_Address__c>();
+        addressList = [select id, city__c, country__c, state__c,street__c,PostalCode__c, is_main__c, Address_Type__c , Account__c, Name FROM Account_Address__c where  Account__c=:recordId];
+        return addressList;        
     }
 
     @AuraEnabled

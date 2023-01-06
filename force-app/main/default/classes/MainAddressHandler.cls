@@ -9,9 +9,8 @@ public with sharing class MainAddressHandler {
     public static TriggerSwitch__mdt triggerOperationsSwitch = TriggerSwitch__mdt.getInstance('account_address_switch_on_address');
 
     public static void toggleTraverseMainAddressToAccountOnInsert(Map<id,Account_Address__c> newAddressMap){
-        if(! MainAddressHandler.triggerOperationsSwitch.is_active__c){
-            return;
-        }
+        if(MainAddressHandler.triggerOperationsSwitch.is_active__c){
+            
         list<id> accountIds = new list<id>();
         list<Account_Address__c> newMainAdressList = new list<Account_Address__c>();
 
@@ -30,8 +29,7 @@ public with sharing class MainAddressHandler {
                         if(!(oldOrNewMainAddress.id == address.id)){
                             oldOrNewMainAddress.is_main__c = false;
                             mainAdressesToUpdateAsNotMainList.add(oldOrNewMainAddress);
-                        }
-                        
+                        } 
                     }
                 }
             }
@@ -75,6 +73,7 @@ public with sharing class MainAddressHandler {
             if(!accountsToUpdate.isEmpty()){
                 update new list<account>(accountsToUpdate);
             }
+        }
     }
     public static void toggleMainAddressOnUpdate(Map<id,Account_Address__c> addressMap){
         if(MainAddressHandler.triggerOperationsSwitch.is_active__c){
