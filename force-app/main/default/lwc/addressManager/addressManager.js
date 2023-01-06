@@ -5,7 +5,7 @@
  */
 
 import { api, wire, LightningElement, track } from 'lwc';
-import getRecord from '@salesforce/apex/AccountAddressController.getRelatedAddresses';
+import getRelatedAddresses from '@salesforce/apex/AccountAddressController.getRelatedAddresses';
 import handleAddressDelete from '@salesforce/apex/AccountAddressController.deleteAddress';
 
 export default class AddressManager extends LightningElement {
@@ -16,22 +16,25 @@ export default class AddressManager extends LightningElement {
     recordIdToEdit = "";
     fecthError;
 
-    @track
-    addresses = [];
+   // @track
+    addresses = [{Id:1},{Id:2},{Id:3}];
+
+
+
     @api objectApiName;
     @api recordId;
-    @wire(getRecord, {
+
+    @wire(getRelatedAddresses, {
         recordId: '$recordId'
     })
     getRelatedAccountAddress({ error, data }) {
         if (data) {
-            this.addresses = [...data];
-            console.log(data)
+            this.addresses = data;            
             this.fecthError = undefined;
 
         } else if (error) {
             this.fecthError = error;
-            console.log(this.fecthError);
+            console.log('fecthError ::',this.fecthError);
             this.addresses = [];
         }
     }

@@ -95,11 +95,6 @@ public with sharing class MainAddressHandler {
                                     mainAdressesToUpdateAsNotMainList.add(existingMainAddressesOnAccountList[i]);
                                 }
                             }
-                        }else{
-                            for (Account_Address__c oldMainAddress : existingMainAddressesOnAccountList) {
-                                oldMainAddress.is_main__c = false;
-                                mainAdressesToUpdateAsNotMainList.add(oldMainAddress);
-                            }
                         }
                     }
                 }

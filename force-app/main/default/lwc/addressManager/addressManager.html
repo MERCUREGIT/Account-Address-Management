@@ -1,4 +1,5 @@
 <template>
+   PArent Account ID {recordId}
     <div if:true={fecthError} class="slds-notify slds-notify_alert slds-alert_error" role="alert">
         <span class="slds-assistive-text">error</span>
         <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small"
@@ -79,17 +80,19 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody key={address.Id}  for:each={addresses} for:item="address">
-                    <tr class="slds-hint-parent">
-                        <c-address-item address={address}>
+                <tbody >
+                    <tr class="slds-hint-parent" for:each={addresses}  for:item="address"  key={address.Id} >
+                        <!-- {address.Name}  -->
+                        <c-address-item if:true={address} key={address.Name} address={address}>
                         </c-address-item>
-                        <td role="gridcell">
-                            <c-address-action-group onview={viewOnly} ondeleteaddress={handleDeleteAddress}
+                        <c-address-action-group if:true={address}  key={address.Name} onview={viewOnly} ondeleteaddress={handleDeleteAddress}
                                 onupdate={toggleEdit} address={address}></c-address-action-group>
-                        </td>
-                    </tr>
+                       </tr>
                 </tbody>
             </table>
         </div>
     </article>
 </template>
+<!-- <c-boundary>
+    
+</c-boundary> -->
