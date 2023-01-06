@@ -16,10 +16,12 @@ export default class AddressManager extends LightningElement {
     recordIdToEdit = "";
     fecthError;
 
-   // @track
-    addresses = [{Id:1},{Id:2},{Id:3}];
+    error =undefined;
+    stack = undefined;
 
-
+    get stack(){
+        return this.stack.toString();
+    }
 
     @api objectApiName;
     @api recordId;
@@ -40,7 +42,8 @@ export default class AddressManager extends LightningElement {
     }
 
     handleDeleteAddress(event) {
-        handleAddressDelete({ recordId: event.detail.id })
+        let id = event.detail.id;
+        handleAddressDelete({ recordId: id.toString() })
             .then(res => {
                 this.addresses = [...this.addresses.filter(address => { return address.Id != event.detail.id })];
             }).catch(error => {
@@ -74,5 +77,9 @@ export default class AddressManager extends LightningElement {
         this.cancelAction();
         this.recordIdToEdit = event.detail.id;
         this.isViewOnly = !this.isViewOnly;
+    }
+
+    errorCallback(error, stack) {
+        this.error = error;
     }
 }
