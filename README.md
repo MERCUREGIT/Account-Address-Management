@@ -17,6 +17,8 @@ The `sfdx-project.json` file contains useful configuration information for your 
 - [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
 - [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
 
+## Project requirements
+
 - Creation a custom object to store addresses as a separate entity for account. Address can be Billing, or Shipping. Address can be marked as main.
 - An Account_Address__C object was created and a master to detail relationship established with the parent account standard object.
 - Appropriate custom fields such as city_c, country_c, state_c,street_c,PostalCode__c,Address_Type_c , Account__c created.
