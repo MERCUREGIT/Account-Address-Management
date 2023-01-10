@@ -11,10 +11,6 @@
                 </svg>
             </span>
             <h2>Ooooooooups Trailblazer.... seems an error occured, tehcnical issues preventing load. Please do wait and refresh in some minutes, could not get related records for account with ID {recordId} </h2>
-
-            <p> More About The Error:
-                {stack}
-            </p>
             <div class="slds-notify__close">
                 <button class="slds-button slds-button_icon slds-button_icon-small slds-button_icon-inverse" title="Close">
                     <svg class="slds-button__icon" aria-hidden="true">
@@ -46,27 +42,28 @@
             </div>
         </div>
         <article class="slds-card slds-p-around_xx-small">
-            <div class="slds-card__header slds-grid">
+            <div class="slds-card__header slds-p-around_xx-medium slds-grid">
                 <header class="slds-media slds-media_center slds-has-flexi-truncate">
                     <div class="slds-media__figure">
                         <span class="slds-icon_container slds-icon-standard-contact" title="contact">
-                            <svg class="slds-icon slds-icon_small" aria-hidden="true">
-                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#address"></use>
-                            </svg>
+                            <lightning-icon icon-name="standard:account" alternative-text="Create"
+                                title="Create new address"></lightning-icon>
                             <span class="slds-assistive-text">Account Address</span>
                         </span>
                     </div>
                     <div class="slds-media__body">
                         <h2 class="slds-card__header-title">
                             <a href="#" class="slds-card__header-link slds-truncate" title="Account Address">
+                                
                                 <span>Account Address</span>
                             </a>
                         </h2>
                     </div>
                     <div class="slds-no-flex">
-                        <button class="slds-button slds-button_icon-small" if:false={isAction} onclick={createRecord}>
-                            <lightning-icon icon-name="utility:record_create" alternative-text="Create"
-                                title="Create new address"></lightning-icon>
+                        <button class="slds-button slds-button_neutral" if:false={isAction} onclick={createRecord}>
+                              
+                            New Address
+                            
                         </button>
                         <button class="slds-button slds-button_neutral" title="Cancel Action" if:true={isAction}
                             onclick={cancelAction}>
@@ -78,8 +75,18 @@
             </div>
             <div class="slds-media__body">
                 <template if:true={isAction}>
-                    <c-address-form isedit={isEdit} isviewonly={isViewOnly} iscreate={isCreate}
-                        recordidtoedit={recordIdToEdit} oncancel={cancelAction}></c-address-form>
+                        <lightning-record-form object-api-name="Account_Address__c" record-id={recordIdToEdit}
+                            layout-type="Compact" fields={fields} columns="2" mode="readonly" oncancel={cancel} onsuccess={onSuccess}>
+                            
+                        </lightning-record-form>
+                    
+                        <lightning-record-form object-api-name="Account_Address__c" record-id={recordIdToEdit} if:true={isEdit} mode="edit"
+                            layout-type="Full" columns="2" oncancel={cancel} fields={fields} onsuccess={onSuccess}>
+                        </lightning-record-form>
+                    
+                        <lightning-record-form object-api-name="Account_Address__c" fields={fields} oncancel={cancel} layout-type="Full"
+                            if:true={isCreate} columns="2" onsuccess={onSuccess}>
+                        </lightning-record-form>
                 </template>
                 <div if:false={addresses} class="demo-only demo-only_viewport" style="height:6rem;position:relative">
                     <div role="status" class="slds-spinner slds-spinner_medium">
@@ -88,32 +95,69 @@
                         <div class="slds-spinner__dot-b"></div>
                     </div>
                 </div>
-                <table if:true={addresses} if:false={isAction}
-                    class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table_fixed-layout"
-                    role="grid" aria-label="List of Account Address Records">
-                    <thead>
-                        <tr class="slds-line-height_reset">
-                            <th class="" scope="col">
-                                <div class="slds-truncate" title="Name">Address Name</div>
-                            </th>
-                            <th class="" scope="col">
-                                <div class="slds-truncate" title="Flag">Main Flag</div>
-                            </th>
-                            <th class="" scope="col">
-                                <div class="slds-truncate" title="Type">Address Type</div>
-                            </th>
-                            <th class="" scope="col">
-    
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody >
-                        <tr class="slds-hint-parent"  for:each={addresses}  for:item="address"  key={address.Id} >
-                            <c-address-item address={address}>  </c-address-item>
-                            <c-address-action-group onview={viewOnly} ondeleteaddress={handleDeleteAddress} onupdate={toggleEdit} address={address} ></c-address-action-group>
-                        </tr>
-                    </tbody>
-                </table>
+                <div  if:true={isDelete} class="demo-only demo-only_viewport" style="height:6rem;position:relative">
+                    <div role="status" class="slds-spinner slds-spinner_medium">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+                <template if:false={isAction}>
+                    <table 
+                        class="slds-table slds-table_cell-buffer slds-row-hover slds-table_bordered slds-table_fixed-layout"
+                        role="grid" aria-label="List of Account Address Records">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Name">Address Name</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Flag">Main Flag</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate" title="Type">Address Type</div>
+                                </th>
+                                <th class="" scope="col">
+        
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                                <template for:each={addresses}  for:item="address">
+                                    <tr class="slds-hint-parent address-item"   key={address.Id}>
+                                        <td role="gridcell">
+                                            <div class="slds-truncate" title={address.Name}>
+                                                <a href="#" onclick={handleNavigate} tabindex="-1">{address.Name}</a>
+                                            </div>
+                                        </td>
+                                        <td role="gridcell">
+                                            <div class="slds-truncate"  if:true={address.Is_main__c} title={address.Is_main__c}>
+                                                <lightning-pill label="Main Address" variant="plain">
+                                                    <lightning-icon icon-name="standard:address" alternative-text="Address"></lightning-icon>
+                                                </lightning-pill>
+                                            </div>
+                                            <div class="slds-truncate"  if:false={address.Is_main__c} title={address.Is_main__c}>
+                                                <lightning-pill label="Normal Address" variant="plain"> </lightning-pill>
+                                            </div>
+                                        </td>
+                                        <td role="gridcell">
+                                            <div class="slds-truncate" title={address.Address_Type__c}>{address.Address_Type__c} </div>
+                                        </td>
+                                
+                                        <td role="gridcell">
+                                            <div class="slds-truncate" title="Action Group">
+                                                <div class="slds-button-group" role="group">
+                                                    <button class="slds-button slds-button_neutral" onclick={viewOnly} data-id={address.Id}>View</button>
+                                                    <button class="slds-button slds-button_neutral" onclick={toggleEdit} data-id={address.Id}>edit</button>
+                                                    <button class="slds-button slds-button_neutral" onclick={deleteAddress} data-id={address.Id}>delete</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                        </tbody>
+                    </table>
+                </template>
             </div>
         </article>
     </template>
